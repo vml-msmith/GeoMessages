@@ -1,0 +1,2 @@
+class GlobalState(object):
+    pass

@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+<head>
+ <meta charset="utf-8" />
+  <title>App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script type="text/javascript" charset="utf-8" src="cordova.js"></script>
+  <script type="text/javascript" charset="utf-8" src="vendor/js/jquery-2.1.0.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="assets/js/app.js"></script>
+  <!-- Setup jQuery.Mobile --->
+  <script>
+    jQuery(document).bind("mobileinit", function() {
+      App.utilities.log("Configure jQueryMobile");
+
+      jQuery.support.cors = true;
+      jQuery.support.cors = true;
+      jQuery.mobile.allowCrossDomainPages = true;
+
+      jQuery.mobile.phonegapNavigationEnabled = true;
+      jQuery.mobile.defaultDialogTransition = "pop";
+      jQuery.mobile.defaultPageTransition = "none";
+      jQuery.mobile.page.prototype.options.addBackBtn = true;
+
+      jQuery.mobile.loader.prototype.options.text = "loading";
+      jQuery.mobile.loader.prototype.options.textVisible = true;
+      jQuery.mobile.loader.prototype.options.theme = "a";
+
+    });
+
+   jQuery( document ).ready(function () { //..only launched once the body exist
+     jQuery( 'body' ).on('pagecontainertransition', function( event, data ) {
+       if (typeof(data['options']['link']) != 'undefined') {
+         var href = data['options']['link'][0]['attributes']['href'];
+         if (href.value == '#slide') {
+           if (typeof(data['options']['link'][0]['attributes']['data-rowid']) != 'undefined') {
+             App.renderSlide(data['options']['link'][0]['attributes']['data-rowid'].value);
+           }
+         }
+       }
+     });
+   });
+
+    App.init();
+  </script>
+<style>
+
+body .ui-content { margin: 0; padding: 0; }
+.ui-content .ui-listview a { font-size: .8em }
+.ui-content .ui-listview a img { border: 1px solid black; min-width: 5em; min-height: 5em; margin-top: 1px; margin-left: 1px }
+.ui-content .ui-listview a h3 { font-size: .8em; margin: 0 }
+.ui-content .ui-listview a h4 { font-size: .8em; display: inline-block; margin: 0 }
+.ui-content .ui-listview a .distance { font-size: .8em; display: inline-block }
+.ui-content .ui-listview p { margin: 0}
+body .ui-content .ui-listview { margin: 0 }
+body .ui-header-fixed.ui-fixed-hidden .ui-btn-left, body .ui-header-fixed.ui-fixed-hidden .ui-btn-right, body .ui-header h1.ui-title, body .ui-header a.ui-btn { margin-top: 22px }
+.emptyresults { display: none }
+body #slide .ui-content { padding: 10px; padding-right: 10px; }
+body #slide .ui-content .hero { border: 2px solid black; overflow: hidden; max-height: 300px }
+body #slide .ui-content .hero img { min-width: 100%; max-width: 100% }
+</style>
+  <script type="text/javascript" charset="utf-8" src="vendor/js/jquery.mobile-1.4.2.min.js"></script>
+  <script type="text/javascript" charset="utf-8" src="vendor/js/jquery.form.min.js"></script>
+
+
+  <link rel="stylesheet" href="vendor/css/jquery.mobile-1.4.2.min.css" />
+  <link rel="stylesheet" href="assets/css/app.css" />
+
+
+</head>
+<body>
+
+  <div data-role="page" id="login"  data-add-back-btn="true" data-position="fixed" style="background: url('http://lorempixel.com/400/600/')">
+    <div data-role="content" style="padding: 10px; padding-top: 40px">
+
+		<button onclick="login()">Login with Facebook</button>
+		<button onclick="login()">Login with Google+</button>
+		<button onclick="login()">Login with Monument</button>
+
+    </div><!-- /content -->
+
+
+  </div><!-- /page -->
+
+  <div data-role="page" id="nearby" style="background: url('http://lorempixel.com/400/600/')">
+    <div data-role="header" data-position="fixed">
+      <h1>Nearby</h1>
+      <a href="#create" id="meh">Create</a>
+      <a href="#post">Prefs</a>
+    </div><!-- /header -->
+
+    <div data-role="content">
+
+      <ul data-role="listview" class="rows">
+      </ul>
+      <div class="emptyresults">
+        <p>Oh noes! Nothing nearby</p>
+      </div>
+
+    </div><!-- /content -->
+
+  </div><!-- /page -->
+
+  <div data-role="page" id="slide" style="background: url('http://lorempixel.com/400/600/')">
+    <div data-role="header" data-add-back-btn="true" data-position="fixed">
+      <h1>Slide</h1>
+    </div><!-- /header -->
+
+    <div data-role="content" class="content">
+Blee blah
+    </div><!-- /content -->
+  </div>
+  <div data-role="page" id="create" style="background: url('http://lorempixel.com/400/600/')">
+    <div data-role="header" data-add-back-btn="true" data-position="fixed">
+      <h1>Drop a Line</h1>
+    </div><!-- /header -->
+
+    <div data-role="content">
+      <form id="myForm" action="http://localhost:5000/postMessage/f84133f3-9522-4011-b348-8c658e20837c" method="post" enctype="multipart/form-data" style="padding: 10px">
+
+<div data-role="fieldcontain">
+	<input placeholder="Subject (optional)" name="title" id="title"></textarea>
+
+
+<input type=file name=file>
+
+	<textarea cols="40" rows="10" placeholder="Write a message" name="textarea" id="textarea"></textarea>
+</div>
+
+        <input type=submit value="Post">
+    </form>
+    </div><!-- /content -->
+
+
+  </div><!-- /page -->
+
+<div id="fb-root"></div>
+
+<script>
+</script>
+
+<!-- Facebook stuff -->
+<script src="vendor/js/cdv-plugin-fb-connect.js"></script>
+<script src="vendor/js/facebook-js-sdk.js"></script>
+
+<script>
+  function login() {
+    jQuery('#login').hide()
+    FB.login(function(response) {
+      if (response.authResponse) {
+        console.log(response);
+        App.doLogin(response.authResponse.accessToken);
+      } else {
+       console.log(response);
+        alert('not logged in');
+      }
+    }, { scope: "email" });
+  }
+</script>
+
+</body>
+</html>

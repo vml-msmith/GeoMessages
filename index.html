@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=iso-8859-1" />
+		<meta name="author" content="www.frebsite.nl" />
+		<meta name="viewport" content="width=device-width initial-scale=1.0 maximum-scale=1.0 user-scalable=yes" />
+
+		<title>jQuery.mmenu - Examples</title>
+
+		<link type="text/css" rel="stylesheet" href="demo.css" />
+		<link type="text/css" rel="stylesheet" href="src/css/jquery.mmenu.all.css" />
+
+		<!-- for the one page -->
+		<style type="text/css">
+			#intro,
+			#first,
+			#second,
+			#third
+			{
+				height: 400px;
+			}
+			#intro
+			{
+				padding-top: 40px;
+			}
+			#first,
+			#second,
+			#third
+			{
+				border-top: 1px solid #ccc;
+				padding-top: 60px;
+			}
+		</style>
+
+		<!-- for the fixed header -->
+		<style type="text/css">
+			#header,
+			#footer
+			{
+				position: fixed;
+				width: 100%;
+
+				-webkit-box-sizing: border-box;
+				-moz-box-sizing: border-box;
+				-ms-box-sizing: border-box;
+				-o-box-sizing: border-box;
+				box-sizing: border-box;
+			}
+      .section { display: none }
+      .section h1 { display: none }
+      #section-title h1 { color: #fff }
+      #nearby { display: block }
+      #content { padding: 0; padding-top:40px}
+
+      #nearby .row {
+        font-size: .8em;
+
+        border-bottom: 1px solid gray;
+      margin: 0;
+      padding: 0;
+      }
+      #nearby .type { float: left; height: 50px; width: 50px; border: 1px solid black; margin: 5px }
+      #nearby .title,      #nearby .distance { display: inline-block; margin: 0; padding: 0 }
+      #nearby .title, #nearby .distance, #nearby .who { margin: 0; padding: 0; line-height: .8em }
+		</style>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="src/js/jquery.mmenu.js"></script>
+		<script type="text/javascript">
+			$(function() {
+				var $menu = $('nav#menu'),
+					$html = $('html, body');
+
+				$menu.mmenu();
+				$menu.find( 'li > a' ).on(
+					'click',
+					function()
+					{
+						var href = $(this).attr( 'href' );
+
+						//	if the clicked link is linked to an anchor, scroll the page to that anchor
+						if ( href.slice( 0, 1 ) == '#' )
+						{
+                      $('.section').hide();
+                      $(href).show();
+      console.log($('h1', $(href)));
+      var title = $('h1',$(href)).clone();
+      $('#section-title').empty();
+      $('#section-title').append(title);
+
+							$menu.one(
+								'closed.mm',
+								function()
+								{
+									setTimeout(
+										function()
+										{
+										}, 0
+									);
+								}
+							);
+						}
+					}
+				);
+			});
+
+
+      var row_template = "<div class='row'><div class='type'>#type</div><div class='title'>#title</div><div class='distance'>#dist</div><div class='who'>#who</div><div class='date'>#date</div><div style='clear:both'></div></div>";
+
+
+      var update_list = function() {
+
+      var url = "http://localhost:5000/getNearby/1/39.2128093367,-94.4940195736/100";
+
+      jQuery.getJSON(url,
+        function(data){
+      $('#nearby .rows').empty();
+      for (var key in data.results) {
+      console.log(data.results[key]);
+      var custom_template = row_template;
+      custom_template = custom_template.replace('#title', (data.results[key]['title'] == null) ? '' : data.results[key]['title']);
+      custom_template = custom_template.replace('#dist', '(200m) ');
+      custom_template = custom_template.replace('#who', data.results[key]['author_name']);
+      console.log(custom_template);
+
+      $(custom_template).appendTo($('#nearby .rows'));
+      }
+
+        })
+        .success(function() { console.log("second success"); })
+        .error(function() { alert("error"); })
+        .complete(function() { console.log("complete"); });
+      }
+
+      $(document).ready(function() {
+      update_list();
+      });
+		</script>
+	</head>
+	<body>
+		<div id="page">
+			<div id="header" class="mm-fixed-top">
+				<a href="#menu"></a>
+        <div id="section-title">Test</div>
+			</div>
+			<div id="content">
+				<div id="nearby" class="section">
+          <h1>Nearby</h1>
+          <div class="rows"></div>
+				<div id="friends" class="section">
+<h1>Friends</h1>
+          Friends
+Test
+teste
+test
+				</div>
+				<div id="post" class="section">
+<h1>Post</h1>
+          Post
+				</div>
+				<div id="prefs" class="section">
+<h1>Pref</h1>
+          Prefs
+				</div>
+			</div>
+			<div id="footer" class="mm-fixed-bottom">
+        &nbsp;
+			</div>
+			<nav id="menu">
+        <ul>
+				  <li><a href="#nearby">Nearby</a></li>
+					<li><a href="#friends">Friends</a></li>
+					<li><a href="#post">Post</a></li>
+					<li><a href="#prefs">Preferences</a></li>
+				</ul>
+			</nav>
+		</div>
+	</body>
+</html>
